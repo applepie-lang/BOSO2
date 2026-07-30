@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#218c4a" />
+  <meta name="description" content="부산 해양안전 시민 신고 앱 BOSO" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    :root { --teal: #218c4a; --deep: #165f35; --sky: #eaf7ed; --ink: #173d26; }
+    .hero { background: linear-gradient(130deg, #19733d, #42ad63); }
+    .wave { background: #a8dfb7; }
+    .score { background: #124d2a; }
+    .points-card { background: linear-gradient(125deg, #218c4a, #124d2a); }
+    .photo-box img { width: 86%; height: 86%; object-fit: contain; background: #f4f7f5; justify-self: center; align-self: center; }
+  </style>
+  <title>BOSO | Busan Ocean Save Observer</title>
+</head>
+<body>
+  <main class="app">
+    <section class="screen active" id="home">
+      <header><div class="brand"><span class="brand-mark">⌁</span><div><b>BOSO</b><small>Busan Ocean Save Observer</small></div></div><button class="bell" aria-label="알림">●</button></header>
+      <div class="hero"><p>오늘도 부산 바다를 지켜주셔서<br><strong>고맙습니다, 시민 관찰자님.</strong></p><div class="wave"></div></div>
+      <section class="score"><div><span>나의 환경 포인트</span><strong id="points">120 P</strong></div><button onclick="showTab('rewards')">사용하기 <i>›</i></button></section>
+      <h2>무엇을 발견하셨나요?</h2><p class="hint">사진과 위치를 보내면 담당 기관에 전달돼요.</p>
+      <div class="category-grid">
+        <button class="category trash" onclick="chooseCategory('해양 쓰레기','🧴')"><span>🧴</span><b>해양 쓰레기</b><small>플라스틱 · 폐어구</small></button>
+        <button class="category animal" onclick="chooseCategory('동물 사체','🐋')"><span>🐋</span><b>동물 사체</b><small>해양동물 발견</small></button>
+        <button class="category facility" onclick="chooseCategory('시설물 파손','⚠️')"><span>⚠️</span><b>시설물 파손</b><small>난간 · 안내판</small></button>
+        <button class="category emergency" onclick="chooseCategory('인명 위험','🆘')"><span>🆘</span><b>인명 위험</b><small>긴급 상황</small></button>
+      </div>
+      <div class="notice"><span>✦</span><p><b>신고하면 +20P</b><br>문제 해결 확인 시 +50P가 추가돼요.</p></div>
+      <section class="report-list"><div class="section-title"><h2>내 최근 제보</h2><button onclick="showTab('map')">지도 보기 ›</button></div><div id="recent"><p class="empty">아직 제보한 내용이 없어요.</p></div></section>
+    </section>
+
+    <section class="screen" id="report"><header><button class="back" onclick="showTab('home')">‹</button><h1>새 제보하기</h1><span></span></header><div class="report-wrap"><div class="selected"><span id="selectedEmoji">🧴</span><div><b id="selectedCategory">해양 쓰레기</b><small>발견한 현장을 제보해 주세요</small></div></div><label class="photo-box" id="photoBox"><input type="file" id="photo" accept="image/*" capture="environment" onchange="previewPhoto(this)"><span id="photoPrompt">📷<b>사진 추가하기</b><small>현장이 잘 보이게 찍어주세요</small></span><img id="preview" alt="첨부 사진 미리보기"></label><button class="ai-check" id="aiCheck" onclick="analyzeImage()">✦ AI로 해양 쓰레기 판별하기</button><div class="ai-result" id="aiResult" hidden></div><label>상세 설명 <em>선택</em><textarea id="description" placeholder="예: 해변 입구 쪽에 폐그물이 많이 쌓여 있어요."></textarea></label><div class="location"><div><span>⌖</span><div><b>현재 위치</b><small id="locationText">위치 정보를 확인해 주세요</small></div></div><button onclick="getLocation()">내 위치</button></div><div class="office"><span>🏛️</span><p>담당 기관 <b id="office">위치를 확인하면 담당 기관이 표시됩니다.</b></p></div><button class="submit" onclick="submitReport()">제보 보내기 <span>+20 P</span></button><p class="privacy">사진은 AI 판별을 위해 기기 안에서 분석되며 외부로 전송되지 않습니다.</p></div></section>
+
+    <section class="screen" id="map"><header><div><h1>부산 제보 지도</h1><p>시민의 제보로 깨끗해지는 바다</p></div><button class="filter">필터 ⚙</button></header><div class="map-legend"><span>● 쓰레기</span><span>● 동물 사체</span><span>● 시설물</span></div><div id="leafletMap"></div><div class="map-summary"><b><span id="mapCount">0</span>건</b>의 시민 제보가 처리 중이에요</div></section>
+
+    <section class="screen" id="rewards"><header><div><h1>포인트 상점</h1><p>좋은 행동이 더 좋은 내일로</p></div></header><div class="points-card"><small>보유 포인트</small><strong id="pointsLarge">120 P</strong><button onclick="alert('기부 기능은 정식 서비스에서 연결됩니다.\n관심을 가져주셔서 감사합니다!')">🌱 포인트 기부</button></div><h2 class="reward-title">친환경 리워드</h2><div class="rewards"><article><div class="reward-img mint">🌿</div><b>친환경 대나무 칫솔 세트</b><p>500 P</p><button onclick="redeem(500,'대나무 칫솔 세트')">교환하기</button></article><article><div class="reward-img blue">☕</div><b>텀블러 음료 교환권</b><p>1,000 P</p><button onclick="redeem(1000,'텀블러 음료 교환권')">교환하기</button></article><article><div class="reward-img yellow">CU</div><b>CU 모바일 상품권</b><p>3,000 P</p><button onclick="redeem(3000,'CU 모바일 상품권')">교환하기</button></article><article><div class="reward-img navy">GS25</div><b>GS25 모바일 상품권</b><p>3,000 P</p><button onclick="redeem(3000,'GS25 모바일 상품권')">교환하기</button></article></div></section>
+    <nav><button class="nav active" data-tab="home" onclick="showTab('home')"><span>⌂</span>홈</button><button class="nav" data-tab="map" onclick="showTab('map')"><span>⌖</span>제보 지도</button><button class="nav report-nav" data-tab="report" onclick="chooseCategory('해양 쓰레기','🧴')"><span>＋</span>제보하기</button><button class="nav" data-tab="rewards" onclick="showTab('rewards')"><span>♧</span>포인트</button></nav>
+  </main>
+  <div id="toast"></div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js"></script><script src="app.js"></script><script src="point-setup.js"></script><script src="location.js"></script><script src="category-ai.js"></script><script src="beach-gate.js"></script><script src="history-enhance.js"></script><script src="known-sample-check.js"></script><script src="coupon-box.js"></script>
+</body></html>
