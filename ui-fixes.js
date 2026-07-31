@@ -1,5 +1,9 @@
 // Keep navigation usable even when an old optional script fails to load.
 (function () {
+  var extraUiStyle = document.createElement('style');
+  extraUiStyle.textContent = '.info-links{display:grid;gap:12px;margin-top:24px}.info-links a{display:flex;align-items:center;gap:13px;padding:17px;border:1px solid #cfeaf7;border-radius:16px;background:#f3fbff;color:#17445d;text-decoration:none}.info-links a>span{font-size:27px}.info-links b,.info-links small{display:block}.info-links b{font-size:14px}.info-links small{margin-top:4px;color:#6790a6;font-size:11px}.info-links i{margin-left:auto;font-size:24px;color:#3caddd;font-style:normal}nav .nav{min-width:0;flex:1;font-size:9px}@media(min-width:850px){nav .nav{flex:0 1 135px;font-size:10px}}';
+  document.head.appendChild(extraUiStyle);
+
   function closeReportChoice() {
     document.querySelectorAll('.report-choice').forEach(function (item) { item.remove(); });
   }
@@ -90,4 +94,51 @@
     photoInput.addEventListener('click', function () { this.value = ''; });
     photoInput.addEventListener('change', resetAiForNewPhoto);
   }
+
+  function removeDuplicateReports(list) {
+    var seen = {};
+    return list.filter(function (item) {
+      var key = [item.category, item.description, item.date, (item.pos || []).join(',')].join('|');
+      if (seen[key]) return false;
+      seen[key] = true;
+      return true;
+    });
+  }
+
+  var savedReports = removeDuplicateReports(reports());
+  localStorage.setItem('bosoReports', JSON.stringify(savedReports));
+  var lastReportKey = '';
+  var lastReportAt = 0;
+
+  window.submitReport = function () {
+    var photo = document.getElementById('photo');
+    if (!photo.files || !photo.files.length) {
+      toast('\uC0AC\uC9C4\uC744 \uCD94\uAC00\uD55C \uB4A4 \uC81C\uBCF4\uD574 \uC8FC\uC138\uC694.');
+      return;
+    }
+    if (!position) {
+      toast('\uC704\uCE58 \uC815\uBCF4\uB97C \uD655\uC778\uD55C \uB4A4 \uC81C\uBCF4\uD574 \uC8FC\uC138\uC694.');
+      return;
+    }
+    var requestKey = [selected, document.getElementById('description').value, position.join(',')].join('|');
+    if (requestKey === lastReportKey && Date.now() - lastReportAt < 3000) return;
+    lastReportKey = requestKey;
+    lastReportAt = Date.now();
+    var item = {
+      id: Date.now(),
+      category: selected,
+      emoji: emoji,
+      description: document.getElementById('description').value || '\uC2DC\uBBFC \uC81C\uBCF4',
+      pos: position,
+      date: new Date().toLocaleDateString('ko-KR'),
+      resolved: false
+    };
+    var all = removeDuplicateReports(reports());
+    all.unshift(item);
+    localStorage.setItem('bosoReports', JSON.stringify(all));
+    savePoints(points() + 25);
+    renderReports();
+    toast('\uC81C\uBCF4\uAC00 \uC804\uB2EC\uB418\uC5C8\uC2B5\uB2C8\uB2E4! +25P \uC801\uB9BD');
+    setTimeout(function () { window.showTab('home'); }, 700);
+  };
 })();
