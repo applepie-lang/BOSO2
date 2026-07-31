@@ -11,19 +11,30 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="style.css" />
   <style>
-    :root { --teal: #218c4a; --deep: #165f35; --sky: #eaf7ed; --ink: #173d26; }
-    .hero { background: linear-gradient(130deg, #19733d, #42ad63); }
-    .wave { background: #a8dfb7; }
-    .score { background: #124d2a; }
-    .points-card { background: linear-gradient(125deg, #218c4a, #124d2a); }
-    .photo-box img { width: 86%; height: 86%; object-fit: contain; background: #f4f7f5; justify-self: center; align-self: center; }
+    :root { --teal: #3caddd; --deep: #186d98; --sky: #eaf8ff; --ink: #17445d; --muted: #6790a6; --line: #cfeaf7; }
+    body { background: #eaf8ff; }
+    .app { background: #fff; }
+    .hero { background: linear-gradient(130deg, #9bdef8, #64c5ec); color: #12445f; }
+    .wave { background: #d5f2ff; }
+    .score { background: #8ad4f2; color: #12445f; }
+    .score span, .points-card small { color: #36708d; }
+    .score button, .filter { color: #14516f; }
+    .points-card { background: linear-gradient(125deg, #bcecff, #78c9ec); color: #12445f; }
+    .points-card button, .rewards button { background: #e9f8ff; color: #176a94; }
+    .category, .selected, .location, .office, .notice, .location-preview { border-color: #cfeaf7; background: #f3fbff; }
+    .trash, .animal, .facility, .emergency { background: #edf9ff; }
+    .submit, .report-nav span { background: #45b5e4; }
+    .brand-mark { background: transparent; width: 42px; height: 42px; }
+    .brand-mark img { width: 42px; height: 42px; display: block; }
+    .brand b { color: #17445d; }
+    .photo-box img { width: 86%; height: 86%; object-fit: contain; background: #f4fbff; justify-self: center; align-self: center; }
   </style>
   <title>BOSO | Busan Ocean Save Observer</title>
 </head>
 <body>
   <main class="app">
     <section class="screen active" id="home">
-      <header><div class="brand"><span class="brand-mark">⌁</span><div><b>BOSO</b><small>Busan Ocean Save Observer</small></div></div><button class="bell" aria-label="알림">●</button></header>
+      <header><div class="brand"><span class="brand-mark"><img src="boso-logo.svg" alt="BOSO 로고"></span><div><b>BOSO</b><small>Busan Ocean Save Observer</small></div></div><button class="bell" aria-label="알림">●</button></header>
       <div class="hero"><p>오늘도 부산 바다를 지켜주셔서<br><strong>고맙습니다, 시민 관찰자님.</strong></p><div class="wave"></div></div>
       <section class="score"><div><span>나의 환경 포인트</span><strong id="points">120 P</strong></div><button onclick="showTab('rewards')">사용하기 <i>›</i></button></section>
       <h2>무엇을 발견하셨나요?</h2><p class="hint">사진과 위치를 보내면 담당 기관에 전달돼요.</p>
