@@ -23,4 +23,33 @@
     var tabButton = event.target.closest('[data-tab]');
     if (tabButton && tabButton.dataset.tab !== 'report') closeReportChoice();
   });
+
+  var photoInput = document.getElementById('photo');
+  var aiButton = document.getElementById('aiCheck');
+  var aiResult = document.getElementById('aiResult');
+  var originalAiLabel = aiButton ? aiButton.textContent : '';
+
+  function resetAiForNewPhoto() {
+    if (aiButton) {
+      aiButton.disabled = false;
+      aiButton.textContent = originalAiLabel;
+    }
+    if (aiResult) {
+      aiResult.hidden = true;
+      aiResult.textContent = '';
+      aiResult.className = 'ai-result';
+    }
+    window.aiReportApproved = false;
+  }
+
+  var previousPreview = window.previewPhoto;
+  window.previewPhoto = function (input) {
+    resetAiForNewPhoto();
+    return previousPreview(input);
+  };
+
+  if (photoInput) {
+    photoInput.addEventListener('click', function () { this.value = ''; });
+    photoInput.addEventListener('change', resetAiForNewPhoto);
+  }
 })();
