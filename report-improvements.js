@@ -15,6 +15,13 @@ window.openReportChoice = function () {
 };
 document.querySelector('.report-nav').onclick = () => openReportChoice();
 
+// 다른 화면으로 이동하면 선택 창이 남아 지도를 가리는 일을 막습니다.
+const originalShowTab = window.showTab;
+window.showTab = function (id) {
+  document.querySelectorAll('.report-choice').forEach((item) => item.remove());
+  return originalShowTab(id);
+};
+
 const analyzeWithLooseTrashRule = window.analyzeImage;
 window.analyzeImage = async function () {
   await analyzeWithLooseTrashRule();
