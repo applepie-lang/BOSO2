@@ -4,6 +4,22 @@
   extraUiStyle.textContent = '.info-links{display:grid;gap:12px;margin-top:24px}.info-links a{display:flex;align-items:center;gap:13px;padding:17px;border:1px solid #cfeaf7;border-radius:16px;background:#f3fbff;color:#17445d;text-decoration:none}.info-links a>span{font-size:27px}.info-links b,.info-links small{display:block}.info-links b{font-size:14px}.info-links small{margin-top:4px;color:#6790a6;font-size:11px}.info-links i{margin-left:auto;font-size:24px;color:#3caddd;font-style:normal}nav .nav{min-width:0;flex:1;font-size:9px}@media(min-width:850px){nav .nav{flex:0 1 135px;font-size:10px}}';
   document.head.appendChild(extraUiStyle);
 
+  // Show a small welcome screen before opening the service.
+  function showWelcome() {
+    var welcome = document.createElement('section');
+    welcome.className = 'welcome-screen';
+    welcome.style.cssText = 'position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;background:linear-gradient(160deg,#eaf8ff 0%,#bfeafb 58%,#8bd5f2 100%);color:#17445d;text-align:center;';
+    welcome.innerHTML = '<div style="width:94px;height:94px;padding:14px;border-radius:30px;background:#fff;box-shadow:0 14px 32px rgba(24,109,152,.18)"><img src="boso-logo.svg" alt="BOSO 로고" style="width:100%;height:100%;object-fit:contain"></div><h1 style="margin:24px 0 6px;font-size:38px;letter-spacing:1px">BOSO</h1><p style="margin:0;color:#36708d;font-size:14px;font-weight:600">Busan Ocean Save Observer</p><p style="margin:36px 0 24px;line-height:1.7;font-size:16px;font-weight:700">시민의 제보로<br>깨끗하고 안전한 바다를 만들어요.</p><button type="button" style="width:min(300px,100%);border:0;border-radius:16px;padding:17px;background:#3caddd;color:#fff;font:800 16px inherit;box-shadow:0 10px 20px rgba(24,109,152,.22);cursor:pointer">들어가기 <span aria-hidden="true">→</span></button><small style="margin-top:18px;color:#6790a6">사진과 위치 정보로 해양 문제를 제보할 수 있어요.</small>';
+    welcome.querySelector('button').onclick = function () {
+      welcome.style.transition = 'opacity .22s ease';
+      welcome.style.opacity = '0';
+      setTimeout(function () { welcome.remove(); }, 230);
+    };
+    document.body.appendChild(welcome);
+  }
+
+  showWelcome();
+
   function closeReportChoice() {
     document.querySelectorAll('.report-choice').forEach(function (item) { item.remove(); });
   }
